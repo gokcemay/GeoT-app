@@ -90,3 +90,37 @@ pre {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
+
+/* =================================== */
+/* Mobil Uyumluluk (Responsive)     */
+/* =================================== */
+
+/* Ekran genişliği 768px veya daha az olduğunda bu kurallar geçerli olsun */
+@media (max-width: 768px) {
+    
+    body {
+        /* Mobil cihazlarda kenar boşluklarını azalt */
+        padding: 10px;
+    }
+
+    .main-container {
+        /* İki sütunlu yapıyı (yan yana) boz ve tek sütunlu (alt alta) yap */
+        flex-direction: column;
+        gap: 20px; /* Elementler arası boşluğu ayarla */
+    }
+
+    .left-column, .right-column {
+        /* Sütunların genişliğini tam ekran yap */
+        flex: 1 1 100%;
+        width: 100%;
+    }
+
+    h1 {
+        /* Mobil için başlık fontunu biraz küçült */
+        font-size: 1.8rem;
+    }
+
+    p {
+        font-size: 1rem;
+    }
+}
