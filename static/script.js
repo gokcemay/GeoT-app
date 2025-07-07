@@ -1,4 +1,4 @@
-// static/script.js (TAM VE DÜZELTİLMİŞ NİHAİ VERSİYON)
+// static/script.js (MOBİL DOKUNMATİK DESTEĞİ EKLENMİŞ NİHAİ VERSİYON)
 
 const imageUploader = document.getElementById('image-uploader');
 const uploadedImage = document.getElementById('uploaded-image');
@@ -14,95 +14,44 @@ let startPos = {};
 let isDrawing = false;
 let currentFile = null;
 
-// Sayfa yüklendiğinde veya yeniden boyutlandırıldığında canvası ayarla
-window.addEventListener('load', setupCanvas);
-window.addEventListener('resize', setupCanvas);
-uploadedImage.addEventListener('load', setupCanvas);
+// --- OLAY YÖNETİCİLERİ (HEM MASAÜSTÜ HEM MOBİL İÇİN) ---
 
-// Canvas boyutunu resimle eşitleyen ana fonksiyon
-function setupCanvas() {
-    // Görüntünün render edilmiş boyutlarını al
-    const renderedWidth = uploadedImage.clientWidth;
-    const renderedHeight = uploadedImage.clientHeight;
-    
-    // Canvas boyutlarını bu render edilmiş boyutlarla eşitle
-    canvas.width = renderedWidth;
-    canvas.height = renderedHeight;
-    
-    // Çizim alanını temizle
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
-    if (debugText) {
-        debugText.innerText = "Lütfen analiz için bir alan seçin.";
-    }
-}
-
-// Kullanıcı yeni bir resim yüklerse
-imageUploader.addEventListener('change', (e) => {
-    // Önceki seçimi sıfırla
-    selection = {};
-    analyzeButton.disabled = true;
-
-    currentFile = e.target.files && e.target.files.length > 0 ? e.target.files[0] : null;
-    if (currentFile) {
-        const reader = new FileReader();
-        reader.onload = (event) => {
-            uploadedImage.src = event.target.result;
-            // 'load' olayı tetikleneceği için setupCanvas burada çağrılmıyor.
-        };
-        reader.readAsDataURL(currentFile);
-    }
-});
-
-// Fare koordinatlarını almak için güvenilir fonksiyon
-function getMousePos(canvas, evt) {
-    const rect = canvas.getBoundingClientRect();
-    return {
-        x: evt.clientX - rect.left,
-        y: evt.clientY - rect.top
-    };
-}
-
-// Fareye tıklandığında
-canvas.addEventListener('mousedown', (e) => {
+// Çizim başlangıcı
+function handleDrawStart(coords) {
     isDrawing = true;
-    startPos = getMousePos(canvas, e);
-});
+    startPos = coords;
+}
 
-// Fare hareket ettiğinde
-canvas.addEventListener('mousemove', (e) => {
+// Çizim hareketi
+function handleDrawMove(coords) {
     if (!isDrawing) return;
     
-    const mousePos = getMousePos(canvas, e);
-    const width = mousePos.x - startPos.x;
-    const height = mousePos.y - startPos.y;
+    const width = coords.x - startPos.x;
+    const height = coords.y - startPos.y;
     
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.strokeStyle = 'red';
     ctx.lineWidth = 2;
     ctx.strokeRect(startPos.x, startPos.y, width, height);
-});
+}
 
-// Fare bırakıldığında
-canvas.addEventListener('mouseup', (e) => {
+// Çizim sonu
+function handleDrawEnd(coords) {
     if (!isDrawing) return;
     isDrawing = false;
 
-    const mousePos = getMousePos(canvas, e);
-    let x1 = startPos.x;
-    let y1 = startPos.y;
-    let x2 = mousePos.x;
-    let y2 = mousePos.y;
+    const x1 = startPos.x;
+    const y1 = startPos.y;
+    const x2 = coords.x;
+    const y2 = coords.y;
 
-    // Seçimin canvas sınırları içinde kalmasını sağla
     selection = {
         x: Math.max(0, Math.min(x1, x2)),
         y: Math.max(0, Math.min(y1, y2)),
         width: Math.abs(x1 - x2),
         height: Math.abs(y1 - y2)
     };
-    
-    // Seçimin taşan kısımlarını kırp
+
     if (selection.x + selection.width > canvas.width) {
         selection.width = canvas.width - selection.x;
     }
@@ -124,50 +73,55 @@ canvas.addEventListener('mouseup', (e) => {
         analyzeButton.disabled = true;
         if(debugText) debugText.innerHTML += "<br><b>Geçersiz seçim. Buton pasif.</b>";
     }
+}
+
+// --- FARE OLAYLARI ---
+canvas.addEventListener('mousedown', (e) => handleDrawStart(getMousePos(e)));
+canvas.addEventListener('mousemove', (e) => handleDrawMove(getMousePos(e)));
+canvas.addEventListener('mouseup', (e) => handleDrawEnd(getMousePos(e)));
+canvas.addEventListener('mouseleave', () => { if(isDrawing) isDrawing = false; }); // Fare canvas'tan çıkarsa çizmeyi durdur
+
+// --- DOKUNMATİK EKRAN OLAYLARI (YENİ EKLENEN KISIM) ---
+canvas.addEventListener('touchstart', (e) => {
+    e.preventDefault(); // Sayfanın kaymasını engelle
+    handleDrawStart(getTouchPos(e));
+}, { passive: false });
+
+canvas.addEventListener('touchmove', (e) => {
+    e.preventDefault(); // Sayfanın kaymasını engelle
+    handleDrawMove(getTouchPos(e));
+}, { passive: false });
+
+canvas.addEventListener('touchend', (e) => {
+    e.preventDefault();
+    handleDrawEnd(getTouchPos(e, true));
 });
 
-// Analiz butonuna tıklandığında
-analyzeButton.addEventListener('click', async () => {
-    if (!selection.width || !selection.height) {
-        alert("Lütfen geçerli bir alan seçin.");
-        return;
-    }
+// --- YARDIMCI FONKSİYONLAR ---
 
-    loader.style.display = 'block';
-    explanationDiv.innerText = '';
-    
-    // Orijinal resim ve ekranda görünen resim arasındaki ölçek farkını hesapla
-    const scaleX = uploadedImage.naturalWidth / uploadedImage.clientWidth;
-    const scaleY = uploadedImage.naturalHeight / uploadedImage.clientHeight;
-
-    // Seçim koordinatlarını orijinal resim boyutuna göre ölçekle
-    const scaledSelection = {
-        x: selection.x * scaleX,
-        y: selection.y * scaleY,
-        width: selection.width * scaleX,
-        height: selection.height * scaleY,
+function getMousePos(evt) {
+    const rect = canvas.getBoundingClientRect();
+    return {
+        x: evt.clientX - rect.left,
+        y: evt.clientY - rect.top
     };
+}
 
-    const formData = new FormData();
-    formData.append('selection', JSON.stringify(scaledSelection));
-    
-    if (currentFile) {
-        formData.append('image', currentFile);
-    } else {
-        formData.append('default_image_url', uploadedImage.src);
-    }
+function getTouchPos(evt, isEnd = false) {
+    const rect = canvas.getBoundingClientRect();
+    // 'touchend' olayında, dokunma bilgisi 'touches' yerine 'changedTouches' içindedir.
+    const touch = isEnd ? evt.changedTouches[0] : evt.touches[0];
+    return {
+        x: touch.clientX - rect.left,
+        y: touch.clientY - rect.top
+    };
+}
 
-    try {
-        const response = await fetch('/analyze', { method: 'POST', body: formData });
-        const result = await response.json();
-        if (result.error) {
-            explanationDiv.innerText = `Hata: ${result.error}`;
-        } else {
-            explanationDiv.innerText = result.explanation;
-        }
-    } catch (error) {
-        explanationDiv.innerText = `Bir hata oluştu: ${error}`;
-    } finally {
-        loader.style.display = 'none';
-    }
-});
+// --- SAYFA YÜKLEME VE KURULUM FONKSİYONLARI (DEĞİŞİKLİK YOK) ---
+
+window.addEventListener('load', setupCanvas);
+window.addEventListener('resize', setupCanvas);
+uploadedImage.addEventListener('load', setupCanvas);
+
+function setupCanvas() {
+    const renderedWidth = uploadedImage.clientWidth;
