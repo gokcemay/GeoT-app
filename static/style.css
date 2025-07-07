@@ -1,0 +1,92 @@
+/* static/style.css (GÜNCELLENMİŞ HALİ) */
+body {
+    font-family: sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #f4f7f6;
+}
+
+/* YENİ EKLENENLER: İki sütunlu ana konteyner */
+.main-container {
+    display: flex;
+    gap: 30px; /* Sütunlar arası boşluk */
+    align-items: flex-start; /* Sütunların üstten hizalanması */
+}
+
+.left-column {
+    flex: 2; /* Sol sütun, sağ sütunun 2 katı genişliğinde olsun */
+    display: flex;
+}
+
+.right-column {
+    flex: 1; /* Sağ sütun */
+}
+/* YENİ EKLEMELER BİTTİ */
+
+
+h1 {
+    margin-top: 0;
+}
+
+#image-container {
+    position: relative;
+    border: 2px dashed #ccc;
+    width: 100%; /* Kendi sütununun tamamını kapla */
+    min-height: 400px; /* Başlangıçta minimum bir yüksekliği olsun */
+    background-color: #fff;
+}
+
+#uploaded-image, #selection-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    max-width: 100%; /* Resmin konteyner dışına taşmasını engeller */
+    height: auto;
+}
+
+#selection-canvas {
+    cursor: crosshair;
+}
+
+#image-uploader {
+    margin-bottom: 20px;
+}
+
+#analyze-button {
+    margin-top: 15px;
+    margin-bottom: 20px;
+    padding: 10px 15px;
+    font-size: 16px;
+    cursor: pointer;
+    width: 100%;
+}
+
+#result-container {
+    margin-top: 20px;
+    padding: 15px;
+    border: 1px solid #eee;
+    background-color: #ffffff;
+    min-height: 100px;
+}
+
+pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.loader {
+    border: 5px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 5px solid #3498db;
+    width: 40px;
+    height: 40px;
+    animation: spin 2s linear infinite;
+    margin: 20px auto;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

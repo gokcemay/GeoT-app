@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geometrik Tolerans Analizi</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="main-container">
+        <div class="left-column">
+            <div id="image-container">
+                <img id="uploaded-image" src="#" alt="Yüklenen resim burada görünecek">
+                <canvas id="selection-canvas"></canvas>
+            </div>
+        </div>
+
+        <div class="right-column">
+            <h1>Geometrik Tolerans Analiz Uygulaması</h1>
+            <p>1. Adım: Bir teknik resim dosyası yükleyin.</p>
+            <input type="file" id="image-uploader" accept="image/*">
+            
+            <p>2. Adım: Resim üzerinde analiz etmek istediğiniz tolerans kutucuğunu fare ile seçin.</p>
+            
+            <button id="analyze-button" disabled>Analiz Et</button>
+            
+
+			<div id="result-container">
+                <h2>Analiz Sonucu:</h2>
+                <div id="loader" class="loader" style="display: none;"></div>
+                <pre id="explanation"></pre>
+            </div>
+
+            <div id="debug-info" style="margin-top: 15px; padding: 10px; background-color: #eee; border: 1px solid #ddd;">
+                <strong>Hata Ayıklama Bilgisi:</strong>
+                <p id="debug-text">Henüz bir seçim yapılmadı.</p>
+            </div>
+            </div>
+    </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
