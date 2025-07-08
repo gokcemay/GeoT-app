@@ -1,15 +1,17 @@
-# app.py (TÜM PARÇALARI DOĞRU SIRADA OLAN NİHAİ VERSİYON)
+# app.py (YEREL DOSYA KULLANIMI İÇİN GÜNCELLENMİŞ VERSİYON)
 
 # 1. Adım: Tüm import'lar en başta yer alır
 import os
 import json
 import io
-import requests
+import requests # Bu artık varsayılan resim için kullanılmayacak ama başka bir özellik için kalabilir.
 import google.generativeai as genai
+from google.api_core import exceptions
 from flask import Flask, request, jsonify, render_template, session, redirect, url_for
 from flask_babel import Babel, gettext as _
 from dotenv import load_dotenv
 from PIL import Image
+
 
 # 2. Adım: Temel yapılandırmalar yapılır
 load_dotenv()
@@ -44,28 +46,34 @@ def inject_locale():
 def index():
     return render_template('index.html')
 
+# app.py dosyanızda bu fonksiyonu bulun ve aşağıdakiyle değiştirin
+
 @app.route('/analyze', methods=['POST'])
 def analyze():
     selection_str = request.form.get('selection')
     if not selection_str:
         return jsonify({'error': _('Seçim alanı koordinatları bulunamadı')}), 400
     
-    image = None
+    image = None # 'image' değişkenini başlangıçta boş olarak tanımla
     
+    # Resim ya yüklenen dosyadan ya da varsayılan dosyadan alınır
     if 'image' in request.files and request.files['image'].filename != '':
         file = request.files['image']
         image = Image.open(file.stream)
-    elif 'default_image_url' in request.form:
+    elif request.form.get('use_default_image') == 'true':
         try:
-            url = request.form['default_image_url']
-            response = requests.get(url, stream=True)
-            response.raise_for_status()
-            image = Image.open(response.raw)
-        except requests.exceptions.RequestException as e:
-            return jsonify({'error': f"URL'den resim indirilemedi: {e}"}), 400
-    else:
-        return jsonify({'error': _('Analiz edilecek bir resim bulunamadı.')}), 400
+            image_path = os.path.join(app.root_path, 'static', 'example.png')
+            image = Image.open(image_path)
+        except FileNotFoundError:
+            return jsonify({'error': _('Varsayılan example.png dosyası static klasöründe bulunamadı.')}), 404
+    
+    # --- YENİ EKLENEN GÜVENLİK KONTROLÜ ---
+    # Eğer yukarıdaki adımlardan sonra 'image' hala boş ise, hata ver ve devam etme
+    if image is None:
+        return jsonify({'error': _('Analiz edilecek geçerli bir resim bulunamadı.')}), 400
+    # --- KONTROL BİTTİ ---
 
+    # Artık 'image' değişkeninin dolu olduğundan emin olarak devam edebiliriz.
     try:
         scaled_selection = json.loads(selection_str)
         cropped_image = image.crop((
@@ -87,6 +95,11 @@ def analyze():
         response = model.generate_content([prompt, cropped_image])
 
         return jsonify({'explanation': response.text})
+        
+    except exceptions.ResourceExhausted as e:
+        user_friendly_message = _('Bu demo uygulama, günlük ücretsiz kullanım limitini doldurmuştur. Lütfen yarın tekrar deneyin.')
+        return jsonify({'error': user_friendly_message}), 429
+        
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 

@@ -11,11 +11,29 @@
         <div class="left-column">
     <div id="image-container">
         <img id="uploaded-image" 
-             src="https://upload.wikimedia.org/wikipedia/commons/0/00/Add_dia_tol_zone.png" 
+             src="{{ url_for('static', filename='example.png') }}" 
              alt="{{ _('Yüklenen resim burada görünecek') }}"
              crossorigin="anonymous"> 
         <canvas id="selection-canvas"></canvas>
     </div>
+	<div class="left-column">
+            <div id="image-container">
+                <img id="uploaded-image" 
+                     src="https://upload.wikimedia.org/wikipedia/commons/0/00/Add_dia_tol_zone.png" 
+                     alt="{{ _('Yüklenen resim burada görünecek') }}"
+                     crossorigin="anonymous"> 
+                <canvas id="selection-canvas"></canvas>
+            </div>
+
+            <div class="image-credit">
+                <p>
+                    {{ _('Sample image is by') }}
+                    <a class="external free" href="https://en.wikipedia.org/wiki/Geometric_dimensioning_and_tolerancing#/media/File:Geometric_dimenioning_and_tolerancing-hole.svg" target="_blank" rel="noopener noreferrer">https://en.wikipedia.org/...</a>, 
+                    <a href="https://creativecommons.org/licenses/by-sa/4.0" title="Creative Commons Attribution-Share Alike 4.0" target="_blank" rel="noopener noreferrer">CC BY-SA 4.0</a>, 
+                    <a href="https://commons.wikimedia.org/w/index.php?curid=123927304" target="_blank" rel="noopener noreferrer">Link</a>
+                </p>
+            </div>
+            </div>
 	</div>
 
         <div class="right-column">

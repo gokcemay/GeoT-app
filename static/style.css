@@ -124,3 +124,12 @@ pre {
         font-size: 1rem;
     }
 }
+.image-credit {
+    margin-top: 10px;
+    font-size: 0.8rem; /* Yazıyı biraz küçültür */
+    color: #555;      /* Yazı rengini biraz soluklaştırır */
+    text-align: center;
+}
+.image-credit a {
+    color: #444;
+}

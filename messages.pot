@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2025-07-07 17:35+0300\n"
+"POT-Creation-Date: 2025-07-08 14:55+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,53 +17,59 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.17.0\n"
 
-#: app.py:53
-msgid "Resim dosyası bulunamadı"
-msgstr ""
-
-#: app.py:59
+#: app.py:51
 msgid "Seçim alanı koordinatları bulunamadı"
 msgstr ""
 
-#: app.py:84
+#: app.py:67
+msgid "Varsayılan example.png dosyası static klasöründe bulunamadı."
+msgstr ""
+
+#: app.py:69
+msgid "Analiz edilecek bir resim bulunamadı."
+msgstr ""
+
+#: app.py:83
+msgid "Sen bir makine mühendisliği... (prompt metniniz aynı)"
+msgstr ""
+
+#: app.py:93
 msgid ""
-"Sen bir makine mühendisliği ve ASME Y14.5 geometrik toleranslandırma "
-"standardı uzmanısın. Sana bir teknik resimden kırpılmış bir görüntü "
-"vereceğim. Bu görüntü bir özellik kontrol çerçevesi içeriyor. Görüntüyü "
-"analiz et ve cevabını Markdown formatında, başlıklar ve listeler "
-"kullanarak açık ve anlaşılır bir şekilde sun. Cevabın şu bilgileri "
-"içermeli: 1. Geometrik Toleransın Adı. 2. Tolerans Değeri ve varsa çap "
-"sembolü. 3. Varsa Datum Referansları. 4. Bu toleransın pratikte ne anlama"
-" geldiğinin detaylı açıklaması."
+"Bu demo uygulama, günlük ücretsiz kullanım limitini doldurmuştur. Lütfen "
+"yarın tekrar deneyin."
 msgstr ""
 
 #: templates/index.html:6
 msgid "Geometrik Tolerans Analizi"
 msgstr ""
 
-#: templates/index.html:13
+#: templates/index.html:15 templates/index.html:23
 msgid "Yüklenen resim burada görünecek"
 msgstr ""
 
-#: templates/index.html:22
+#: templates/index.html:30
+msgid "Sample image is by"
+msgstr ""
+
+#: templates/index.html:43
 msgid "Geometrik Tolerans Analiz Uygulaması"
 msgstr ""
 
-#: templates/index.html:23
+#: templates/index.html:44
 msgid "1. Adım: Bir teknik resim dosyası yükleyin."
 msgstr ""
 
-#: templates/index.html:26
+#: templates/index.html:47
 msgid ""
 "2. Adım: Resim üzerinde analiz etmek istediğiniz tolerans kutucuğunu fare"
 " ile seçin."
 msgstr ""
 
-#: templates/index.html:28
+#: templates/index.html:49
 msgid "Analiz Et"
 msgstr ""
 
-#: templates/index.html:31
+#: templates/index.html:52
 msgid "Analiz Sonucu:"
 msgstr ""
 
